@@ -20,6 +20,9 @@ enum Message {
     UpdateInput(String),
 }
 
+use std::sync::LazyLock;
+static TEXT_INPUT_ID: LazyLock<Id> = LazyLock::new(|| Id::new("name_input"));
+
 impl App {
     fn new() -> (Self, Command<Message>) {
         (
@@ -27,7 +30,7 @@ impl App {
                 name: String::from("Iced"),
                 ..Default::default()
             },
-            text_input::focus(Id::new("name_input")),
+            text_input::focus(TEXT_INPUT_ID.clone()),
         )
     }
 
@@ -53,7 +56,7 @@ impl App {
         )
         .on_input(Message::UpdateInput)
         .on_submit(Message::SayHello)
-        .id(Id::new("name_input"));
+        .id(TEXT_INPUT_ID.clone());
         let name_field = row![name_input, button];
         column![name_field, hello_text].into()
     }
