@@ -1,6 +1,6 @@
 use iced::{
-    Element,
-    widget::{button, column, row, text, text_input},
+    Element, Task as Command,
+    widget::{button, column, row, text, text_input, text_input::Id},
 };
 
 fn main() -> iced::Result {
@@ -21,21 +21,24 @@ enum Message {
 }
 
 impl App {
-    fn new() -> Self {
-        App {
-            name: String::from("Iced"),
-            ..Default::default()
-        }
+    fn new() -> (Self, Command<Message>) {
+        (
+            App {
+                name: String::from("Iced"),
+                ..Default::default()
+            },
+            text_input::focus(Id::new("name_input")),
+        )
     }
 
     /// Update the application state here
     fn update(&mut self, message: Message) {
         match message {
-            Message::SayHello => {
-                self.name = self.name_field.clone();
-            }
             Message::UpdateInput(content) => {
                 self.name_field = content;
+            }
+            Message::SayHello => {
+                self.name = self.name_field.clone();
             }
         }
     }
@@ -44,9 +47,13 @@ impl App {
         let button = button("Ok").on_press(Message::SayHello);
         let hello_text = text(format!("Hello, {}!", self.name));
 
-        let name_input = text_input("Enter your name, and press Enter or Ok button", &self.name_field)
-            .on_input(Message::UpdateInput)
-            .on_submit(Message::SayHello);
+        let name_input = text_input(
+            "Enter your name, and press Enter or Ok button",
+            &self.name_field,
+        )
+        .on_input(Message::UpdateInput)
+        .on_submit(Message::SayHello)
+        .id(Id::new("name_input"));
         let name_field = row![name_input, button];
         column![name_field, hello_text].into()
     }
