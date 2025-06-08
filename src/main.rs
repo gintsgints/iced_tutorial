@@ -26,15 +26,17 @@ static TEXT_INPUT_ID: LazyLock<Id> = LazyLock::new(|| Id::new("name_input"));
 impl App {
     fn new() -> (Self, Command<Message>) {
         (
+            // Initialize the application state
             App {
                 name: String::from("Iced"),
                 ..Default::default()
             },
+            // Focus the text input when the application starts
             text_input::focus(TEXT_INPUT_ID.clone()),
         )
     }
 
-    /// Update the application state here
+    // Update the application state here
     fn update(&mut self, message: Message) {
         match message {
             Message::UpdateInput(content) => {
@@ -46,6 +48,7 @@ impl App {
         }
     }
 
+    // Construct the view of the application based on the current state
     fn view(&self) -> Element<Message> {
         let button = button("Ok").on_press(Message::SayHello);
         let hello_text = text(format!("Hello, {}!", self.name));
